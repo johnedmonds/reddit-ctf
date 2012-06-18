@@ -11,8 +11,12 @@ import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.Polygon;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.pocketcookies.ctf.shared.MapAreas;
 
 /**
@@ -43,10 +47,18 @@ public class CTFClient implements EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
+        final Grid grid = new Grid(2, 2);
+        RootPanel.get("loading").add(grid);
+        grid.setWidget(0, 0, new Image("images/spinner.gif"));
+        grid.setText(0, 1, "Loading maps...");
+        grid.setWidget(1, 0, new Image("images/spinner.gif"));
+        grid.setText(1, 1, "Loading map areas...");
+
         greetingService.getMapAreas(new AsyncCallback<MapAreas>() {
             @Override
             public void onSuccess(MapAreas result) {
                 mapAreas = result;
+                grid.setWidget(1, 0, new Image("images/check.png"));
                 if (isFinishedLoading()) {
                     onFinishedLoading();
                 }
@@ -54,13 +66,14 @@ public class CTFClient implements EntryPoint {
 
             @Override
             public void onFailure(Throwable caught) {
-                // TODO: Deal with this.
+                grid.setWidget(1, 0, new Image("images/x.png"));
             }
         });
         Maps.loadMapsApi("", "2", true, new Runnable() {
             @Override
             public void run() {
                 mapsFinishedLoading = true;
+                grid.setWidget(0, 0, new Image("images/check.png"));
                 if (isFinishedLoading()) {
                     onFinishedLoading();
                 }
@@ -76,9 +89,9 @@ public class CTFClient implements EntryPoint {
         assert mapAreas != null : "onFinishedLoading called before map areas finished loading";
         assert mapsFinishedLoading : "onFinishedLoading called before maps finished loading.";
 
-        final MapWidget map = new MapWidget(mapAreas.getPinkZone().get(0), 15);
+        final MapWidget map = new MapWidget(mapAreas.getPinkZone().get(0), 16);
         map.setSize("100%", "100%");
-        RootLayoutPanel.get().clear();
+        DOM.getElementById("loading").removeFromParent();
         RootLayoutPanel.get().add(map);
 
         Geolocation.getIfSupported().getCurrentPosition(
