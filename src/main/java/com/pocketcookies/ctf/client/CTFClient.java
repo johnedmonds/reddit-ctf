@@ -3,12 +3,15 @@ package com.pocketcookies.ctf.client;
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.geolocation.client.Geolocation;
 import com.google.gwt.geolocation.client.Position;
 import com.google.gwt.geolocation.client.PositionError;
+import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.impl.MapOptionsImpl;
 import com.google.gwt.maps.client.overlay.Marker;
 import com.google.gwt.maps.client.overlay.Polygon;
 import com.google.gwt.user.client.DOM;
@@ -90,9 +93,10 @@ public class CTFClient implements EntryPoint {
         assert mapsFinishedLoading : "onFinishedLoading called before maps finished loading.";
 
         final MapWidget map = new MapWidget(mapAreas.getPinkZone().get(0), 16);
+        map.setPinchToZoom(true);
         map.setSize("100%", "100%");
-        DOM.getElementById("loading").removeFromParent();
         RootLayoutPanel.get().add(map);
+        DOM.getElementById("loading").removeFromParent();
 
         Geolocation.getIfSupported().getCurrentPosition(
                 new Callback<Position, PositionError>() {
