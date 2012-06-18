@@ -94,6 +94,7 @@ public class CTFClient implements EntryPoint {
 
         final MapWidget map = new MapWidget(mapAreas.getPinkZone().get(0), 16);
         map.setPinchToZoom(true);
+        map.setScrollWheelZoomEnabled(true);
         map.setSize("100%", "100%");
         RootLayoutPanel.get().add(map);
         DOM.getElementById("loading").removeFromParent();
