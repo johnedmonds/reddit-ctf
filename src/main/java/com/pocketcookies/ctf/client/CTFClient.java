@@ -72,7 +72,7 @@ public class CTFClient implements EntryPoint {
                 grid.setWidget(1, 0, new Image("images/x.png"));
             }
         });
-        Maps.loadMapsApi("", "2", true, new Runnable() {
+        Maps.loadMapsApi("AIzaSyAKsRJxij7x-_5xQdYj6EDMsGxvbkRJfRQ", "2", true, new Runnable() {
             @Override
             public void run() {
                 mapsFinishedLoading = true;
