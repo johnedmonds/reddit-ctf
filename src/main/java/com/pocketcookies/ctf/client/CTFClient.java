@@ -1,5 +1,7 @@
 package com.pocketcookies.ctf.client;
 
+import java.util.List;
+
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -87,14 +89,31 @@ public class CTFClient implements EntryPoint {
     private boolean isFinishedLoading() {
         return mapsFinishedLoading && mapAreas != null;
     }
+    
+    private LatLng computeAreaCenter(List<LatLng>... areas) {
+        int pointTotal = 0;
+        double latSum = 0;
+        double lngSum = 0;
+        for (List<LatLng> area : areas) {
+            pointTotal += area.size();
+            for (LatLng point : area) {
+                latSum += point.getLatitude();
+                lngSum += point.getLongitude();
+            }
+        }
+        return LatLng.newInstance(latSum / pointTotal, lngSum / pointTotal);
+    }
 
     private void onFinishedLoading() {
         assert mapAreas != null : "onFinishedLoading called before map areas finished loading";
         assert mapsFinishedLoading : "onFinishedLoading called before maps finished loading.";
 
-        final MapWidget map = new MapWidget(mapAreas.getPinkZone().get(0), 16);
+        @SuppressWarnings("unchecked")
+        final MapWidget map = new MapWidget(computeAreaCenter(
+                mapAreas.getPinkZone(), mapAreas.getYellowZone()), 16);
         map.setPinchToZoom(true);
         map.setScrollWheelZoomEnabled(true);
+        map.setDraggable(true);
         map.setSize("100%", "100%");
         RootLayoutPanel.get().add(map);
         DOM.getElementById("loading").removeFromParent();
